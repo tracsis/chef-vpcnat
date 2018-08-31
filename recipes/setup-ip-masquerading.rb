@@ -37,10 +37,8 @@ include_recipe 'iptables'
 Chef::Log.info("masquerade source ip: #{node["vpcnat"]["ipmasq_src"]}")
 
 iptables_rule "masquerade" do
-  source "iptables/masquerade.erb"
-  variables(
-    :ipmasq_src => node["vpcnat"]["ipmasq_src"]
-  )
+  lines "-A POSTROUTING -s #{node["vpcnat"]["ipmasq_src"]} -j MASQUERADE"
+  table :nat
   action :enable
   notifies :run, resources(:execute => 'rebuild-iptables')
 end
